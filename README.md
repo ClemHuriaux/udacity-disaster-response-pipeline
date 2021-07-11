@@ -41,4 +41,5 @@ Follow the following steps to run project. The steps 2 to 4 are optionnal, this 
 5. Navigate to the app folder: ```cd app```
 6. Run the app: ```python run.py```
 7. Navigate to the url: ```http://0.0.0.0:3001```
+
 And here we go, you are on the website
