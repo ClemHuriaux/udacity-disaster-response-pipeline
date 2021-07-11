@@ -25,6 +25,22 @@ from sklearn.metrics import classification_report, f1_score
 
 
 def load_data(database_filepath):
+    """ Extract the information we need from the database
+
+    INPUTS:
+    -------
+        database_filepath: str
+            The name of the database we want to extract data
+
+    RETURNS:
+    --------
+        X: Pandas Series
+            The message column from the database
+        y: DataFrame
+            All targets from the DataFrame
+        y.columns: Pandas Index (array)
+            A list with the name of each columns of y
+    """
     engine = db.create_engine(f'sqlite:///{database_filepath}')
     df = pd.read_sql("SELECT * FROM disaster_response", con=engine)
     X = df.message
@@ -34,7 +50,7 @@ def load_data(database_filepath):
 
 
 def tokenize(text):
-    """ Tokenize a text to use it in a ML model and clean it (remove stop words,                     ponctuation, etc.)
+    """ Tokenize a text to use it in a ML model and clean it (remove stop words, ponctuation, etc.)
 
     INPUTS:
     -------
@@ -55,6 +71,13 @@ def tokenize(text):
 
 
 def build_model():
+    """ Create the pipeline we are going to use
+
+    RETURNS:
+    --------
+        pipeline: Pipeline Object
+            The pipeline to train
+    """
     pipeline = Pipeline([
         ('vect', CountVectorizer(tokenizer=tokenize)),
         ('tfidf', TfidfTransformer()),
@@ -99,6 +122,16 @@ def evaluate_model(model, X_test, Y_test, category_names):
 
 
 def save_model(model, model_filepath):
+    """ Save the model we used to a pickle file
+
+    INPUTS:
+    -------
+        model: Pipeline object
+            The model we used
+        model_filepath: str
+            The name of the pickle file
+    """
+
     with open(f"{model_filepath}", "wb") as file:
         pickle.dump(model, file)
 
