@@ -58,6 +58,9 @@ def clean_data(df):
 
     # Remove Duplicates
     df.drop_duplicates(keep='first', inplace=True)
+
+    # Handle the value 2 in the related column.
+    df[df.related == 2] = 0  # Put it to 0 since the category is not valid in this case
     return df
 
 

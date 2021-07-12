@@ -8,20 +8,18 @@ import sqlalchemy as db
 import re
 import pickle
 
-from nltk.tokenize import sent_tokenize, word_tokenize
+
 from nltk.stem import WordNetLemmatizer
 from nltk.tokenize import RegexpTokenizer
 from nltk.corpus import stopwords
 
-from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
-from sklearn.preprocessing import MultiLabelBinarizer
-from sklearn.base import BaseEstimator, TransformerMixin
+from sklearn.ensemble import AdaBoostClassifier
 from sklearn.multioutput import MultiOutputClassifier
 from sklearn.model_selection import train_test_split
-from sklearn.pipeline import Pipeline, FeatureUnion
+from sklearn.pipeline import Pipeline
 from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
 from sklearn.model_selection import GridSearchCV
-from sklearn.metrics import classification_report, f1_score
+from sklearn.metrics import classification_report
 
 
 def load_data(database_filepath):
@@ -71,7 +69,7 @@ def tokenize(text):
 
 
 def build_model():
-    """ Create the pipeline we are going to use
+    """ Create the pipeline we are going to use. Then select the best parameters with GridSearchCV
 
     RETURNS:
     --------
@@ -83,7 +81,12 @@ def build_model():
         ('tfidf', TfidfTransformer()),
         ('clf', MultiOutputClassifier(AdaBoostClassifier()))
     ])
-    return pipeline
+
+    params = {'clf__estimator__learning_rate': [0.5, 1],
+              'clf__estimator__n_estimators': [25, 50]}
+
+    cv = GridSearchCV(pipeline, param_grid=params)
+    return cv
 
 
 def evaluate_model(model, X_test, Y_test, category_names):
